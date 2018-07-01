@@ -21,9 +21,30 @@ class CLSPomoTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testTimerIsRunning() {
+        let pomoTimer: CLSPomoTimer = CLSPomoTimer()
+        pomoTimer.startPomo()
+        XCTAssertTrue(pomoTimer.isRunning)
+    }
+    
+    func testTimerIsNotRunning() {
+        let pomoTimer: CLSPomoTimer = CLSPomoTimer()
+        XCTAssertFalse(pomoTimer.isRunning)
+    }
+    
+    func testTimerIsNotRunningWhenPause() {
+        let pomoTimer: CLSPomoTimer = CLSPomoTimer()
+        pomoTimer.startPomo()
+        pomoTimer.pausePomo()
+        XCTAssertFalse(pomoTimer.isRunning)
+    }
+    
+    func testTimerIsRunningWhenResume() {
+        let pomoTimer: CLSPomoTimer = CLSPomoTimer()
+        pomoTimer.startPomo()
+        pomoTimer.pausePomo()
+        pomoTimer.resumePomo()
+        XCTAssertTrue(pomoTimer.isRunning)
     }
     
     func testPerformanceExample() {
