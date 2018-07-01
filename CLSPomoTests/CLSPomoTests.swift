@@ -10,7 +10,8 @@ import XCTest
 @testable import CLSPomo
 
 class CLSPomoTests: XCTestCase {
-    
+    var pomoTimer = CLSPomoTimer()
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -21,30 +22,45 @@ class CLSPomoTests: XCTestCase {
         super.tearDown()
     }
     
+    /* Tests For state of timer */
     func testTimerIsRunning() {
-        let pomoTimer: CLSPomoTimer = CLSPomoTimer()
         pomoTimer.startPomo()
         XCTAssertTrue(pomoTimer.isRunning)
     }
     
     func testTimerIsNotRunning() {
-        let pomoTimer: CLSPomoTimer = CLSPomoTimer()
         XCTAssertFalse(pomoTimer.isRunning)
     }
     
     func testTimerIsNotRunningWhenPause() {
-        let pomoTimer: CLSPomoTimer = CLSPomoTimer()
         pomoTimer.startPomo()
         pomoTimer.pausePomo()
         XCTAssertFalse(pomoTimer.isRunning)
     }
     
     func testTimerIsRunningWhenResume() {
-        let pomoTimer: CLSPomoTimer = CLSPomoTimer()
         pomoTimer.startPomo()
         pomoTimer.pausePomo()
         pomoTimer.resumePomo()
         XCTAssertTrue(pomoTimer.isRunning)
+    }
+    
+    /* Test for current time of timer */
+    func testTimeCurrentIsZero() {
+        XCTAssertTrue(pomoTimer.currentTime == 0)
+    }
+    
+    func testTimeCurrentIsNotZero() {
+        pomoTimer.startPomo()
+        sleep(1)
+        XCTAssertFalse(pomoTimer.currentTime == 0)
+    }
+    
+    func testTimeCurrentIsZeroWhenStop() {
+        pomoTimer.startPomo()
+        sleep(1)
+        pomoTimer.stopPomo()
+        XCTAssertTrue(pomoTimer.currentTime == 0)
     }
     
     func testPerformanceExample() {
