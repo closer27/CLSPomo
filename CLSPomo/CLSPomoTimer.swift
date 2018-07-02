@@ -32,10 +32,29 @@ class CLSPomoTimer: NSObject {
     var timer: Timer!
     var isRunning: Bool = false
     
-    var mode: TimeMode = TimeMode.working(timeInterval: 1500)
-    var secondPerWork: TimeInterval = 1500  // 25 * 60
-    var secondPerBreak: TimeInterval = 300  // 5 * 60
     var currentPomo: Int = 0    // 1 work + 1 break = 1 pomo
+    var mode: TimeMode = TimeMode.working(timeInterval: 1500)
+
+    private var _secondPerWork: TimeInterval = 1500  // 25 * 60
+    var secondPerWork: TimeInterval {
+        set {
+            _secondPerWork = newValue
+            mode = TimeMode.working(timeInterval: newValue)
+        }
+        get {
+            return _secondPerWork
+        }
+    }
+    private var _secondPerBreak: TimeInterval = 300  // 5 * 60
+    var secondPerBreak: TimeInterval {
+        set {
+            _secondPerWork = newValue
+            mode = TimeMode.breaking(timeInterval: newValue)
+        }
+        get {
+            return _secondPerBreak
+        }
+    }
     
     override init() {
         super.init()
@@ -73,7 +92,7 @@ class CLSPomoTimer: NSObject {
     func checkMode() {
         switch (self.mode) {
             case let .working(timeInterval):
-                print("working mode")
+                print("working mode", timeInterval)
                 if currentTime >= timeInterval {
                     print("complete working session")
                     mode = .breaking(timeInterval: secondPerBreak)
