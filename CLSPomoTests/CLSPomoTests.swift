@@ -76,11 +76,21 @@ class CLSPomoTests: XCTestCase {
         pomoTimer.secondPerWork = 5
         pomoTimer.secondPerBreak = 2
         pomoTimer.startPomo()
-        RunLoop.current.run(until: Date(timeIntervalSinceNow: 7))
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: pomoTimer.secondPerWork + pomoTimer.secondPerBreak))
         pomoTimer.pausePomo()
         XCTAssertFalse(pomoTimer.mode == .breaking(timeInterval: pomoTimer.secondPerBreak))
         XCTAssertTrue(pomoTimer.mode == .working(timeInterval: pomoTimer.secondPerWork))
         XCTAssertTrue(pomoTimer.currentPomo == 1)
+    }
+    
+    func testLongRestMode() {
+        pomoTimer.secondPerWork = 2
+        pomoTimer.secondPerBreak = 1
+        pomoTimer.secondPerLongRest = 3
+        pomoTimer.startPomo()
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: (pomoTimer.secondPerWork + pomoTimer.secondPerBreak) * 4))
+        pomoTimer.pausePomo()
+        XCTAssertTrue(pomoTimer.mode == .longRest(timeInterval: pomoTimer.secondPerLongRest))
     }
     
     func testPerformanceExample() {

@@ -11,6 +11,7 @@ import UIKit
 enum TimeMode {
     case working(timeInterval: TimeInterval)
     case breaking(timeInterval: TimeInterval)
+    case longRest(timeInterval: TimeInterval)
 }
 
 extension TimeMode: Equatable {
@@ -21,6 +22,10 @@ extension TimeMode: Equatable {
         }
         if case .breaking(let lhsTimeInterval) = lhs,
             case .breaking(let rhsTimeInterval) = rhs {
+            return lhsTimeInterval == rhsTimeInterval
+        }
+        if case .longRest(let lhsTimeInterval) = lhs,
+            case .longRest(let rhsTimeInterval) = rhs {
             return lhsTimeInterval == rhsTimeInterval
         }
         return false
@@ -37,6 +42,7 @@ class CLSPomoTimer: NSObject {
 
     var secondPerWork: TimeInterval = 1500  // 25 * 60
     var secondPerBreak: TimeInterval = 300  // 5 * 60
+    var secondPerLongRest: TimeInterval = 1800  // 30 * 60
     
     override init() {
         super.init()
@@ -81,23 +87,39 @@ class CLSPomoTimer: NSObject {
     
     func checkMode() {
         switch (self.mode) {
-            case let .working(timeInterval):
-                print("working mode", timeInterval)
-                if currentTime >= timeInterval {
-                    print("complete working session")
-                    mode = .breaking(timeInterval: secondPerBreak)
-                    clearCurrentTime()
-                }
-            break
-            case let .breaking(timeInterval):
-                print("breaking mode", timeInterval)
-                if self.currentTime >= timeInterval {
-                    print("complete breaking session, increase 1 pomo")
-                    increasePomo()
-                    mode = .working(timeInterval: secondPerWork)
-                    clearCurrentTime()
-                }
-            break
+        case let .working(timeInterval):
+            print("working mode", timeInterval)
+            if currentTime >= timeInterval {
+                print("complete working session")
+                mode = .breaking(timeInterval: secondPerBreak)
+                clearCurrentTime()
+            }
+        break
+        case let .breaking(timeInterval):
+            print("breaking mode", timeInterval)
+            if self.currentTime >= timeInterval {
+                print("complete breaking session, increase 1 pomo")
+                increasePomo()
+                switchMode()
+                clearCurrentTime()
+            }
+        break
+        case .longRest(let timeInterval):
+            print("longRest mode", timeInterval)
+            if self.currentTime >= timeInterval {
+                print("complete breaking session, increase 1 pomo")
+                increasePomo()
+                mode = .working(timeInterval: secondPerWork)
+                clearCurrentTime()
+            }
+        }
+    }
+    
+    private func switchMode() {
+        if currentPomo % 4 == 0 {
+            mode = .longRest(timeInterval: secondPerLongRest)
+        } else {
+            mode = .working(timeInterval: secondPerWork)
         }
     }
     
