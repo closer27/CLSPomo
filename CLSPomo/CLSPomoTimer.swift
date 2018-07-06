@@ -29,7 +29,7 @@ extension TimeMode: Equatable {
 
 class CLSPomoTimer: NSObject {
     var currentTime: TimeInterval = 0
-    var timer: Timer!
+    var timer: DispatchSourceTimer?
     var isRunning: Bool = false
     
     var currentPomo: Int = 0    // 1 work + 1 break = 1 pomo
@@ -58,21 +58,24 @@ class CLSPomoTimer: NSObject {
     
     override init() {
         super.init()
-        
-        self.timer = Timer(timeInterval: 1, repeats: true, block: { (timer) in
-            self.checkTimer()
-        })
-        RunLoop.main.add(self.timer, forMode: RunLoopMode.commonModes)
     }
 
     func startPomo() {
         isRunning = true
-        timer?.fire()
+        let queue = DispatchQueue(label: "com.closer27.CLSPomo.timer", attributes: .concurrent)
+        timer?.cancel()
+        timer = DispatchSource.makeTimerSource(flags: .strict, queue: queue)
+        timer?.schedule(deadline: .now(), repeating: .seconds(1), leeway: .milliseconds(100))
+        timer?.setEventHandler { [weak self] in
+            self?.checkTimer()
+        }
+        timer?.resume()
     }
     
     func stopPomo() {
         isRunning = false
-        timer.invalidate()
+        timer?.cancel()
+        timer = nil
         self.clearCurrentTime()
     }
     
