@@ -35,26 +35,8 @@ class CLSPomoTimer: NSObject {
     var currentPomo: Int = 0    // 1 work + 1 break = 1 pomo
     var mode: TimeMode = TimeMode.working(timeInterval: 1500)
 
-    private var _secondPerWork: TimeInterval = 1500  // 25 * 60
-    var secondPerWork: TimeInterval {
-        set {
-            _secondPerWork = newValue
-            mode = TimeMode.working(timeInterval: newValue)
-        }
-        get {
-            return _secondPerWork
-        }
-    }
-    private var _secondPerBreak: TimeInterval = 300  // 5 * 60
-    var secondPerBreak: TimeInterval {
-        set {
-            _secondPerWork = newValue
-            mode = TimeMode.breaking(timeInterval: newValue)
-        }
-        get {
-            return _secondPerBreak
-        }
-    }
+    var secondPerWork: TimeInterval = 1500  // 25 * 60
+    var secondPerBreak: TimeInterval = 300  // 5 * 60
     
     override init() {
         super.init()
@@ -62,6 +44,11 @@ class CLSPomoTimer: NSObject {
 
     func startPomo() {
         isRunning = true
+        
+        // init time mode to working
+        mode = TimeMode.working(timeInterval: secondPerWork)
+        
+        // set timer
         let queue = DispatchQueue(label: "com.closer27.CLSPomo.timer", attributes: .concurrent)
         timer?.cancel()
         timer = DispatchSource.makeTimerSource(flags: .strict, queue: queue)
@@ -103,7 +90,7 @@ class CLSPomoTimer: NSObject {
                 }
             break
             case let .breaking(timeInterval):
-                print("breaking mode")
+                print("breaking mode", timeInterval)
                 if self.currentTime >= timeInterval {
                     print("complete breaking session, increase 1 pomo")
                     increasePomo()

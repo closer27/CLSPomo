@@ -72,6 +72,17 @@ class CLSPomoTests: XCTestCase {
         XCTAssertTrue(pomoTimer.mode == .breaking(timeInterval: pomoTimer.secondPerBreak))
     }
     
+    func testCompleteBreak() {
+        pomoTimer.secondPerWork = 5
+        pomoTimer.secondPerBreak = 2
+        pomoTimer.startPomo()
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 7))
+        pomoTimer.pausePomo()
+        XCTAssertFalse(pomoTimer.mode == .breaking(timeInterval: pomoTimer.secondPerBreak))
+        XCTAssertTrue(pomoTimer.mode == .working(timeInterval: pomoTimer.secondPerWork))
+        XCTAssertTrue(pomoTimer.currentPomo == 1)
+    }
+    
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {
