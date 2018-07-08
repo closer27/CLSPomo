@@ -15,6 +15,11 @@ class CLSPomoTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        
+        // set seconds for timer just for testing.
+        pomoTimer.secondPerWork = 3
+        pomoTimer.secondPerBreak = 2
+        pomoTimer.secondPerLongRest = 4
     }
     
     override func tearDown() {
@@ -73,8 +78,6 @@ class CLSPomoTests: XCTestCase {
     }
     
     func testCompleteBreak() {
-        pomoTimer.secondPerWork = 5
-        pomoTimer.secondPerBreak = 2
         pomoTimer.startPomo()
         RunLoop.current.run(until: Date(timeIntervalSinceNow: pomoTimer.secondPerWork + pomoTimer.secondPerBreak))
         pomoTimer.pausePomo()
@@ -84,13 +87,34 @@ class CLSPomoTests: XCTestCase {
     }
     
     func testLongRestMode() {
-        pomoTimer.secondPerWork = 2
-        pomoTimer.secondPerBreak = 1
-        pomoTimer.secondPerLongRest = 3
         pomoTimer.startPomo()
         RunLoop.current.run(until: Date(timeIntervalSinceNow: (pomoTimer.secondPerWork + pomoTimer.secondPerBreak) * 4))
         pomoTimer.pausePomo()
         XCTAssertTrue(pomoTimer.mode == .longRest(timeInterval: pomoTimer.secondPerLongRest))
+    }
+    
+    /* Tests for stopping a timer in progress */
+    func testTimeModeIsWorkingAfterStoppingWhileWorking() {
+        pomoTimer.startPomo()
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: pomoTimer.secondPerWork - 1)) // less than working time
+        pomoTimer.stopPomo()
+        XCTAssertTrue(pomoTimer.mode == .working(timeInterval: pomoTimer.secondPerWork))
+        XCTAssertTrue(pomoTimer.currentPomo == 0)
+    }
+    
+    func testTimeModeIsWorkingAfterStoppingWhileBreaking() {
+        pomoTimer.startPomo()
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: pomoTimer.secondPerWork + pomoTimer.secondPerBreak - 1))  // less than breaking time
+        pomoTimer.stopPomo()
+        XCTAssertTrue(pomoTimer.mode == .working(timeInterval: pomoTimer.secondPerWork))
+        XCTAssertTrue(pomoTimer.currentPomo == 0)
+    }
+    
+    func testTimeModeIsWorkingAfterStoopingWhileLongRest() {
+        pomoTimer.startPomo()
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: (pomoTimer.secondPerWork + pomoTimer.secondPerBreak) * 4))  // long rest time
+        pomoTimer.stopPomo()
+        XCTAssertTrue(pomoTimer.mode == .working(timeInterval: pomoTimer.secondPerWork))
     }
     
     func testPerformanceExample() {

@@ -69,6 +69,7 @@ class CLSPomoTimer: NSObject {
         isRunning = false
         timer?.cancel()
         timer = nil
+        switchMode()
         self.clearCurrentTime()
     }
     
@@ -87,15 +88,14 @@ class CLSPomoTimer: NSObject {
     
     func checkMode() {
         switch (self.mode) {
-        case let .working(timeInterval):
+        case .working(let timeInterval):
             print("working mode", timeInterval)
             if currentTime >= timeInterval {
                 print("complete working session")
-                mode = .breaking(timeInterval: secondPerBreak)
+                switchMode()
                 clearCurrentTime()
             }
-        break
-        case let .breaking(timeInterval):
+        case .breaking(let timeInterval):
             print("breaking mode", timeInterval)
             if self.currentTime >= timeInterval {
                 print("complete breaking session, increase 1 pomo")
@@ -103,22 +103,27 @@ class CLSPomoTimer: NSObject {
                 switchMode()
                 clearCurrentTime()
             }
-        break
         case .longRest(let timeInterval):
             print("longRest mode", timeInterval)
             if self.currentTime >= timeInterval {
                 print("complete breaking session, increase 1 pomo")
-                increasePomo()
-                mode = .working(timeInterval: secondPerWork)
+                switchMode()
                 clearCurrentTime()
             }
         }
     }
     
     private func switchMode() {
-        if currentPomo % 4 == 0 {
-            mode = .longRest(timeInterval: secondPerLongRest)
-        } else {
+        switch mode {
+        case .working(_):
+            mode = .breaking(timeInterval: secondPerBreak)
+        case .breaking(_):
+            if currentPomo != 0 && currentPomo % 4 == 0 {
+                mode = .longRest(timeInterval: secondPerLongRest)
+            } else {
+                mode = .working(timeInterval: secondPerWork)
+            }
+        case .longRest(_):
             mode = .working(timeInterval: secondPerWork)
         }
     }
