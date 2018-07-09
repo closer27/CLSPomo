@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RxSwift
 
 enum TimeMode {
     case working(timeInterval: TimeInterval)
@@ -33,7 +34,7 @@ extension TimeMode: Equatable {
 }
 
 class CLSPomoTimer: NSObject {
-    var currentTime: TimeInterval = 0
+    var currentTime: Variable<TimeInterval> = Variable(0)
     var timer: DispatchSourceTimer?
     var isRunning: Bool = false
     
@@ -90,14 +91,14 @@ class CLSPomoTimer: NSObject {
         switch (self.mode) {
         case .working(let timeInterval):
             print("working mode", timeInterval)
-            if currentTime >= timeInterval {
+            if currentTime.value >= timeInterval {
                 print("complete working session")
                 switchMode()
                 clearCurrentTime()
             }
         case .breaking(let timeInterval):
             print("breaking mode", timeInterval)
-            if self.currentTime >= timeInterval {
+            if currentTime.value >= timeInterval {
                 print("complete breaking session, increase 1 pomo")
                 increasePomo()
                 switchMode()
@@ -105,7 +106,7 @@ class CLSPomoTimer: NSObject {
             }
         case .longRest(let timeInterval):
             print("longRest mode", timeInterval)
-            if self.currentTime >= timeInterval {
+            if currentTime.value >= timeInterval {
                 print("complete breaking session, increase 1 pomo")
                 switchMode()
                 clearCurrentTime()
@@ -129,15 +130,14 @@ class CLSPomoTimer: NSObject {
     }
     
     private func increaseSecond() {
-        self.currentTime += 1
-        print(currentTime)
+        currentTime.value += 1
     }
     
     private func clearCurrentTime() {
-        self.currentTime = 0
+        currentTime.value = 0
     }
     
     private func increasePomo() {
-        self.currentPomo += 1
+        currentPomo += 1
     }
 }

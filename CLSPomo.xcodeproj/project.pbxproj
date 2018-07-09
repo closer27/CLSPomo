@@ -18,6 +18,9 @@
 		D78EA1CE20E8BA2F001117D4 /* CLSPomoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78EA1CD20E8BA2F001117D4 /* CLSPomoTests.swift */; };
 		D78EA1D920E8BA2F001117D4 /* CLSPomoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78EA1D820E8BA2F001117D4 /* CLSPomoUITests.swift */; };
 		D78EA1E720E8BFBA001117D4 /* CLSPomoTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78EA1E620E8BFBA001117D4 /* CLSPomoTimer.swift */; };
+		D7A5043F20F3B5AD006263B6 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D760166020F2210B004B9805 /* RxCocoa.framework */; };
+		D7A5044020F3B5AD006263B6 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D760165D20F21E75004B9805 /* RxSwift.framework */; };
+		D7A5044220F3B5AD006263B6 /* RxTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A5044120F3B5AD006263B6 /* RxTest.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +58,7 @@
 		D78EA1D820E8BA2F001117D4 /* CLSPomoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLSPomoUITests.swift; sourceTree = "<group>"; };
 		D78EA1DA20E8BA2F001117D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D78EA1E620E8BFBA001117D4 /* CLSPomoTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLSPomoTimer.swift; sourceTree = "<group>"; };
+		D7A5044120F3B5AD006263B6 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = Carthage/Build/iOS/RxTest.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +75,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7A5044220F3B5AD006263B6 /* RxTest.framework in Frameworks */,
+				D7A5043F20F3B5AD006263B6 /* RxCocoa.framework in Frameworks */,
+				D7A5044020F3B5AD006263B6 /* RxSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +94,7 @@
 		D760165C20F21E75004B9805 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D7A5044120F3B5AD006263B6 /* RxTest.framework */,
 				D760166020F2210B004B9805 /* RxCocoa.framework */,
 				D760165D20F21E75004B9805 /* RxSwift.framework */,
 			);
@@ -175,6 +183,7 @@
 				D78EA1C520E8BA2F001117D4 /* Sources */,
 				D78EA1C620E8BA2F001117D4 /* Frameworks */,
 				D78EA1C720E8BA2F001117D4 /* Resources */,
+				D7A5044320F3B5C1006263B6 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -287,6 +296,25 @@
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+		D7A5044320F3B5C1006263B6 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxTest.framework",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxTest.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -522,6 +550,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = E5KH6XGE5T;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = CLSPomoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -543,6 +575,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = E5KH6XGE5T;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = CLSPomoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
