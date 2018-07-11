@@ -52,20 +52,20 @@ class CLSPomoTests: XCTestCase {
     
     /* Test for current time of timer */
     func testTimeCurrentIsZero() {
-        XCTAssertTrue(pomoTimer.currentTime.value == 0)
+        XCTAssertTrue(pomoTimer.elapsedTime == 0)
     }
     
     func testTimeCurrentIsNotZero() {
         pomoTimer.startPomo()
         sleep(1)
-        XCTAssertFalse(pomoTimer.currentTime.value == 0)
+        XCTAssertFalse(pomoTimer.elapsedTime == 0)
     }
     
     func testTimeCurrentIsZeroWhenStop() {
         pomoTimer.startPomo()
         sleep(1)
         pomoTimer.stopPomo()
-        XCTAssertTrue(pomoTimer.currentTime.value == 0)
+        XCTAssertTrue(pomoTimer.elapsedTime == 0)
     }
     
     func testCompleteWork() {

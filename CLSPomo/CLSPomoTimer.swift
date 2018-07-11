@@ -34,7 +34,6 @@ extension TimeMode: Equatable {
 }
 
 class CLSPomoTimer: NSObject {
-    var currentTime: Variable<TimeInterval> = Variable(0)
     var timer: DispatchSourceTimer?
     var isRunning: Bool = false
     
@@ -44,6 +43,16 @@ class CLSPomoTimer: NSObject {
     var secondPerWork: TimeInterval = 1500  // 25 * 60
     var secondPerBreak: TimeInterval = 300  // 5 * 60
     var secondPerLongRest: TimeInterval = 1800  // 30 * 60
+    var elapsedTime: TimeInterval = 0           // current
+    var totalTimeToReach: TimeInterval {
+        get {
+            switch mode {
+            case .working(let timeInterval), .breaking(let timeInterval), .longRest(let timeInterval):
+                return timeInterval
+            }
+        }
+    }
+    var remainingTime: Variable<TimeInterval> = Variable(0)
     
     override init() {
         super.init()
@@ -91,14 +100,14 @@ class CLSPomoTimer: NSObject {
         switch (self.mode) {
         case .working(let timeInterval):
             print("working mode", timeInterval)
-            if currentTime.value >= timeInterval {
+            if elapsedTime >= timeInterval {
                 print("complete working session")
                 switchMode()
                 clearCurrentTime()
             }
         case .breaking(let timeInterval):
             print("breaking mode", timeInterval)
-            if currentTime.value >= timeInterval {
+            if elapsedTime >= timeInterval {
                 print("complete breaking session, increase 1 pomo")
                 increasePomo()
                 switchMode()
@@ -106,7 +115,7 @@ class CLSPomoTimer: NSObject {
             }
         case .longRest(let timeInterval):
             print("longRest mode", timeInterval)
-            if currentTime.value >= timeInterval {
+            if elapsedTime >= timeInterval {
                 print("complete breaking session, increase 1 pomo")
                 switchMode()
                 clearCurrentTime()
@@ -130,11 +139,13 @@ class CLSPomoTimer: NSObject {
     }
     
     private func increaseSecond() {
-        currentTime.value += 1
+        elapsedTime += 1
+        remainingTime.value = totalTimeToReach - elapsedTime
     }
     
     private func clearCurrentTime() {
-        currentTime.value = 0
+        elapsedTime = 0
+        remainingTime.value = totalTimeToReach - elapsedTime
     }
     
     private func increasePomo() {

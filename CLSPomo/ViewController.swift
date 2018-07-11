@@ -23,11 +23,11 @@ class ViewController: UIViewController {
         pomoTimer.secondPerBreak = 3
         pomoTimer.secondPerLongRest = 6
 
-        pomoTimer.currentTime.asObservable()
+        pomoTimer.remainingTime.asObservable()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { (timeInterval) in
                 print(timeInterval)
-                self.timeLabel.text = self.convertTimeForRemaining(timeInterval, total: self.pomoTimer.secondPerWork)
+                self.timeLabel.text = self.convertTimeForRemaining(timeInterval)
             }, onError: { (error) in
                 print(error)
             }).disposed(by: disposeBag)
@@ -42,10 +42,9 @@ class ViewController: UIViewController {
         pomoTimer.startPomo()
     }
     
-    private func convertTimeForRemaining(_ time: TimeInterval, total: TimeInterval) -> String {
-        let remainTime = total - time
-        let hours = Int(floor(remainTime / 60))
-        let minutes = Int(remainTime) % 60
+    private func convertTimeForRemaining(_ time: TimeInterval) -> String {
+        let hours = Int(floor(time / 60))
+        let minutes = Int(time) % 60
         return String(format: "%02d:%02d", hours, minutes)
     }
 }
