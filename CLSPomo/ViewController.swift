@@ -11,19 +11,16 @@ import RxSwift
 import RxCocoa
 
 class ViewController: UIViewController {
+    var pomoTimer: CLSPomoTimer?
     let disposeBag = DisposeBag()
-    let pomoTimer = CLSPomoTimer()
     @IBOutlet weak var timeLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-
-        pomoTimer.secondPerWork = 5
-        pomoTimer.secondPerBreak = 3
-        pomoTimer.secondPerLongRest = 6
-
-        pomoTimer.remainingTime.asObservable()
+        
+        pomoTimer = CLSPomoTimer(secondPerWork: 5, secondPerBreak: 3, secondPerLongRest: 6)
+        pomoTimer?.remainingTime.asObservable()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { (timeInterval) in
                 print(timeInterval)
@@ -39,7 +36,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func pomoButtonPressed(_ sender: UIButton) {
-        pomoTimer.startPomo()
+        pomoTimer?.startPomo()
     }
     
     private func convertTimeForRemaining(_ time: TimeInterval) -> String {

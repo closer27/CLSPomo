@@ -10,16 +10,11 @@ import XCTest
 @testable import CLSPomo
 
 class CLSPomoTests: XCTestCase {
-    var pomoTimer = CLSPomoTimer()
+    var pomoTimer = CLSPomoTimer(secondPerWork: 3, secondPerBreak: 2, secondPerLongRest: 4)
 
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        
-        // set seconds for timer just for testing.
-        pomoTimer.secondPerWork = 3
-        pomoTimer.secondPerBreak = 2
-        pomoTimer.secondPerLongRest = 4
     }
     
     override func tearDown() {

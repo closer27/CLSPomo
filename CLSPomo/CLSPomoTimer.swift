@@ -37,13 +37,14 @@ class CLSPomoTimer: NSObject {
     var timer: DispatchSourceTimer?
     var isRunning: Bool = false
     
-    var currentPomo: Int = 0    // 1 work + 1 break = 1 pomo
-    var mode: TimeMode = TimeMode.working(timeInterval: 1500)
+    var currentPomo: Int    // 1 work + 1 break = 1 pomo
+    var mode: TimeMode
 
-    var secondPerWork: TimeInterval = 1500  // 25 * 60
-    var secondPerBreak: TimeInterval = 300  // 5 * 60
-    var secondPerLongRest: TimeInterval = 1800  // 30 * 60
-    var elapsedTime: TimeInterval = 0           // current
+    var secondPerWork: TimeInterval
+    var secondPerBreak: TimeInterval
+    var secondPerLongRest: TimeInterval
+    var elapsedTime: TimeInterval
+    var elapsedTimeSubject: PublishSubject<TimeInterval>!
     var totalTimeToReach: TimeInterval {
         get {
             switch mode {
@@ -52,23 +53,41 @@ class CLSPomoTimer: NSObject {
             }
         }
     }
-    var remainingTime: Variable<TimeInterval> = Variable(0)
+    var remainingTime: Variable<TimeInterval>
     
-    override init() {
-        super.init()
+    let disposeBag = DisposeBag()
+
+    init(secondPerWork: TimeInterval, secondPerBreak: TimeInterval, secondPerLongRest: TimeInterval) {
+        self.secondPerWork = secondPerWork
+        self.secondPerBreak = secondPerBreak
+        self.secondPerLongRest = secondPerLongRest
+        
+        mode = TimeMode.working(timeInterval: secondPerWork)
+        currentPomo = 0
+        elapsedTime = 0
+        remainingTime = Variable(secondPerWork)
     }
 
     func startPomo() {
         isRunning = true
         
         // init time mode to working
-        mode = TimeMode.working(timeInterval: secondPerWork)
+        initTimeMode()
+
+        // subscribe elapsed time subject
+        elapsedTimeSubject = PublishSubject()
+        let subscription = elapsedTimeSubject.subscribe(onNext: { [unowned self] (timeInterval) in
+            print(self.totalTimeToReach)
+            print(self.elapsedTime)
+            self.remainingTime.value = self.totalTimeToReach - self.elapsedTime
+        })
+        subscription.disposed(by: disposeBag)
         
         // set timer
         let queue = DispatchQueue(label: "com.closer27.CLSPomo.timer", attributes: .concurrent)
         timer?.cancel()
         timer = DispatchSource.makeTimerSource(flags: .strict, queue: queue)
-        timer?.schedule(deadline: .now(), repeating: .seconds(1), leeway: .milliseconds(100))
+        timer?.schedule(deadline: .now() + .seconds(1), repeating: .seconds(1), leeway: .milliseconds(100))
         timer?.setEventHandler { [weak self] in
             self?.checkTimer()
         }
@@ -79,8 +98,8 @@ class CLSPomoTimer: NSObject {
         isRunning = false
         timer?.cancel()
         timer = nil
-        switchMode()
-        self.clearCurrentTime()
+        initTimeMode()
+        clearCurrentTime()
     }
     
     func pausePomo() {
@@ -123,6 +142,10 @@ class CLSPomoTimer: NSObject {
         }
     }
     
+    private func initTimeMode() {
+        mode = .working(timeInterval: secondPerWork)
+    }
+    
     private func switchMode() {
         switch mode {
         case .working(_):
@@ -140,12 +163,12 @@ class CLSPomoTimer: NSObject {
     
     private func increaseSecond() {
         elapsedTime += 1
-        remainingTime.value = totalTimeToReach - elapsedTime
+        elapsedTimeSubject.onNext(elapsedTime)
     }
     
     private func clearCurrentTime() {
         elapsedTime = 0
-        remainingTime.value = totalTimeToReach - elapsedTime
+        elapsedTimeSubject.onNext(elapsedTime)
     }
     
     private func increasePomo() {
