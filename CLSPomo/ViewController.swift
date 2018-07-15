@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     var pomoTimer: CLSPomoTimer?
     let disposeBag = DisposeBag()
     @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var actionButton: CLSPomoButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,21 +23,27 @@ class ViewController: UIViewController {
         pomoTimer = CLSPomoTimer(secondPerWork: 5, secondPerBreak: 3, secondPerLongRest: 6)
         pomoTimer?.remainingTime.asObservable()
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { (timeInterval) in
+            .subscribe(onNext: { [weak self] (timeInterval) in
                 print(timeInterval)
-                self.timeLabel.text = self.convertTimeForRemaining(timeInterval)
+                self?.timeLabel.text = self?.convertTimeForRemaining(timeInterval)
             }, onError: { (error) in
                 print(error)
             }).disposed(by: disposeBag)
+        
+        pomoTimer?.isRunning.asObservable()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isRunning in
+                self?.actionButton.isRunning = isRunning
+            }).disposed(by: disposeBag)
+        
+        actionButton.rx.tap.subscribe(onNext: { [weak self] _ in
+            self?.pomoTimer?.startPomo()
+        }).disposed(by: disposeBag)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-
-    @IBAction func pomoButtonPressed(_ sender: UIButton) {
-        pomoTimer?.startPomo()
     }
     
     private func convertTimeForRemaining(_ time: TimeInterval) -> String {

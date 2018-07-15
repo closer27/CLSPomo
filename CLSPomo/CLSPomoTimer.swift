@@ -35,7 +35,7 @@ extension TimeMode: Equatable {
 
 class CLSPomoTimer: NSObject {
     var timer: DispatchSourceTimer?
-    var isRunning: Bool = false
+    var isRunning: Variable<Bool>
     
     var currentPomo: Int    // 1 work + 1 break = 1 pomo
     var mode: TimeMode
@@ -62,6 +62,7 @@ class CLSPomoTimer: NSObject {
         self.secondPerBreak = secondPerBreak
         self.secondPerLongRest = secondPerLongRest
         
+        isRunning = Variable(false)
         mode = TimeMode.working(timeInterval: secondPerWork)
         currentPomo = 0
         elapsedTime = 0
@@ -69,7 +70,7 @@ class CLSPomoTimer: NSObject {
     }
 
     func startPomo() {
-        isRunning = true
+        isRunning.value = true
         
         // init time mode to working
         initTimeMode()
@@ -95,7 +96,7 @@ class CLSPomoTimer: NSObject {
     }
     
     func stopPomo() {
-        isRunning = false
+        isRunning.value = false
         timer?.cancel()
         timer = nil
         initTimeMode()
@@ -103,11 +104,11 @@ class CLSPomoTimer: NSObject {
     }
     
     func pausePomo() {
-        isRunning = false
+        isRunning.value = false
     }
     
     func resumePomo() {
-        isRunning = true
+        isRunning.value = true
     }
     
     private func checkTimer() {

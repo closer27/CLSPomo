@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D73718E820F8C18E001F43DA /* CLSPomoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73718E720F8C18E001F43DA /* CLSPomoButton.swift */; };
 		D760165E20F21E75004B9805 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D760165D20F21E75004B9805 /* RxSwift.framework */; };
 		D760166120F2210B004B9805 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D760166020F2210B004B9805 /* RxCocoa.framework */; };
 		D78EA1B620E8BA2D001117D4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78EA1B520E8BA2D001117D4 /* AppDelegate.swift */; };
@@ -41,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D73718E720F8C18E001F43DA /* CLSPomoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLSPomoButton.swift; sourceTree = "<group>"; };
 		D760165D20F21E75004B9805 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		D760166020F2210B004B9805 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		D78EA1B220E8BA2D001117D4 /* CLSPomo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CLSPomo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -133,6 +135,7 @@
 				D78EA1C420E8BA2E001117D4 /* Info.plist */,
 				D78EA1BC20E8BA2D001117D4 /* CLSPomo.xcdatamodeld */,
 				D78EA1E620E8BFBA001117D4 /* CLSPomoTimer.swift */,
+				D73718E720F8C18E001F43DA /* CLSPomoButton.swift */,
 			);
 			path = CLSPomo;
 			sourceTree = "<group>";
@@ -328,6 +331,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D78EA1B820E8BA2D001117D4 /* ViewController.swift in Sources */,
+				D73718E820F8C18E001F43DA /* CLSPomoButton.swift in Sources */,
 				D78EA1BE20E8BA2D001117D4 /* CLSPomo.xcdatamodeld in Sources */,
 				D78EA1B620E8BA2D001117D4 /* AppDelegate.swift in Sources */,
 				D78EA1E720E8BFBA001117D4 /* CLSPomoTimer.swift in Sources */,
